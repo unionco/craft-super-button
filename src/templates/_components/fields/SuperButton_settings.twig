@@ -1,0 +1,77 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Super Button plugin for Craft CMS
+ *
+ * SuperButton Field Settings
+ *
+ * @author    Union
+ * @copyright Copyright (c) 2019 Union
+ * @link      https://github.com/unionco
+ * @package   SuperButton
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("unionco\\superbutton\\assetbundles\\superbuttonsettings\\SuperButtonSettingsAsset") %}
+
+{% set linkTypeGroups = field.linkTypes|group('groupTitle') %}
+
+{% for group, linkTypes in linkTypeGroups %}
+    {{ forms.field({
+        label: group,
+        instructions: "Select and configure the {group} you would like to make available."|t('super-button', {group: group|lower}),
+        first: true
+    }) }}
+
+    {% for linkType in linkTypes %}
+        {% set name = 'types['~ linkType.type ~']' %}
+
+        {{ forms.lightSwitchField({
+            id: linkType.type|id,
+            name: name ~ '[enabled]',
+            label: linkType.defaultLabel(),
+            toggle: linkType.hasSettings ? '#' ~ linkType.type|id ~ '-settings' : null,
+            on: true,
+        }) }}
+    {% endfor %}
+{% endfor %}
+
+{{ forms.field({
+    label: 'Repeater Settings',
+    instructions: "Configure whether your button link can be repeated or not."|t('super-button'),
+}) }}
+
+{{ forms.lightSwitchField({
+    id: 'allowRepeat',
+    name: 'allowRepeat',
+    label: 'Allow Repeater',
+    toggle: '#allowRepeat-settings',
+    on: true,
+}) }}
+
+{{ forms.textField({
+    label: "Min Links"|t('super-button'),
+    instructions: "The minimum number of links the field is allowed to have."|t('super-button'),
+    id: 'minLinks',
+    name: 'minLinks',
+    value: field.minLinks,
+    type: 'number',
+    size: 3,
+    errors: field.getErrors('minLinks')
+}) }}
+
+{{ forms.textField({
+    label: "Max Links"|t('super-button'),
+    instructions: "The maximum number of links the field is allowed to have."|t('super-button'),
+    id: 'maxLinks',
+    name: 'maxLinks',
+    value: field.maxLinks,
+    type: 'number',
+    size: 3,
+    errors: field.getErrors('maxLinks')
+}) }}
+
+{{ dump(linkTypeGroups)}}

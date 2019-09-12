@@ -1,0 +1,38 @@
+{
+    "name": "unionco/craft-super-button",
+    "description": "A beautiful button component field.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "super button"
+    ],
+    "support": {
+        "docs": "https://github.com/unionco/super-button/blob/master/README.md",
+        "issues": "https://github.com/unionco/super-button/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Union",
+            "homepage": "https://github.com/unionco"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "unionco\\superbutton\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Super Button",
+        "handle": "super-button",
+        "changelogUrl": "https://raw.githubusercontent.com/unionco/super-button/master/CHANGELOG.md",
+        "class": "unionco\\superbutton\\SuperButton"
+    }
+}

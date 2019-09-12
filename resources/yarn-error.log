@@ -1,0 +1,36 @@
+Arguments: 
+  /Users/franco/.nvm/versions/node/v10.12.0/bin/node /Users/franco/.yarn/bin/yarn.js init
+
+PATH: 
+  /usr/local/opt/php@7.2/sbin:/usr/local/opt/php@7.2/bin:/usr/local/opt/php@7.1/sbin:/usr/local/opt/php@7.1/bin:/usr/local/opt/php@7.0/sbin:/usr/local/opt/php@7.0/bin:/usr/local/bin:/usr/local/sbin:/Users/franco/.yarn/bin:/Users/franco/.config/yarn/global/node_modules/.bin:/Users/franco/.nvm/versions/node/v10.12.0/bin:/Users/franco/.composer/vendor/bin:/Users/franco/Library/Python/3.6/bin:/Users/franco/Library/Android/sdk/platform-tools:/Users/franco/Library/Android/sdk/tools:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+Yarn version: 
+  1.17.3
+
+Node version: 
+  10.12.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (/Users/franco/.yarn/lib/cli.js:136724:13)
+      at Interface.emit (events.js:182:13)
+      at Interface._ttyWrite (readline.js:783:16)
+      at ReadStream.onkeypress (readline.js:168:10)
+      at ReadStream.emit (events.js:182:13)
+      at emitKeys (internal/readline.js:424:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1022:36)
+      at ReadStream.emit (events.js:182:13)
+      at addChunk (_stream_readable.js:283:12)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
