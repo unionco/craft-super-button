@@ -37,10 +37,50 @@ abstract class ElementButtonLink extends ButtonLink
      */
     private $_element;
 
+    // Public
+    // =========================================================================
+    public $sources = '*';
+    public $customSelectionLabel;
+
     // Static
     // =========================================================================
     public static function group(): string
     {
         return Craft::t('super-button', 'Site');
+    }
+
+    public static function settingsTemplatePath(): string
+    {
+        return 'super-button/_settings/element';
+    }
+
+    public static function inputTemplatePath(): string
+    {
+        return 'super-button/_input/text';
+    }
+
+    // Public Methods
+    // =========================================================================
+    public function __toString(): string
+    {
+        return $this->isAvailable() ? $this->getLink([], false) : '';
+    }
+
+    public function defaultSelectionLabel(): string
+    {
+        return Craft::t('super-button', 'Select') . ' ' . $this->defaultLabel();
+    }
+
+    public function getSelectionLabel(): string
+    {
+        if (!is_null($this->customSelectionLabel) && $this->customSelectionLabel != '') {
+            return $this->customSelectionLabel;
+        }
+        return $this->defaultSelectionLabel();
+    }
+
+    public function getSourceOptions(): array
+    {
+        return SuperButton::$plugin->service->getSourceOptions($this->elementType());
     }
 }

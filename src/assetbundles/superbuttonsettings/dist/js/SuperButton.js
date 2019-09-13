@@ -9,47 +9,88 @@
  * @package   SuperButton
  * @since     1.0.0SuperButtonSuperButton
  */
+(function ($) {
+    Craft.SuperButtonConfigurator = Garnish.Base.extend({
 
- ;(function ( $, window, document, undefined ) {
+        $container: null,
+        $types: null,
+        $fields: null,
+        $entrySources: null,
+        $entryTypes: null,
+        switches: null,
 
-    var pluginName = "SuperButtonSuperButton",
-        defaults = {
-        };
+        init: function (inputNamePrefix) {
+            this.inputNamePrefix = inputNamePrefix;
+            this.$container = $('#' + this.inputNamePrefix);
 
-    // Plugin constructor
-    function Plugin( element, options ) {
-        this.element = element;
+            // types
+            this.$types = this.$container.find('[data-link-type]');
+            this.$fields = this.$container.find('[data-link-type-settings]');
+            this.$switches = this.$container.find('.lightswitch');
+            this.$entrySources = this.$container.find('[data-sources="Entry"] input[type="checkbox"]');
+            this.$entryTypes = this.$container.find('[data-source-types]');
 
-        this.options = $.extend( {}, defaults, options) ;
+            // listeners
+            this.addListener(this.$types, 'click', 'select');
+            this.addListener(this.$switches, 'change', 'toggles');
 
-        this._defaults = defaults;
-        this._name = pluginName;
-
-        this.init();
-    }
-
-    Plugin.prototype = {
-
-        init: function(id) {
-            var _this = this;
-
-            $(function () {
-
-/* -- _this.options gives us access to the $jsonVars that our FieldType passed down to us */
-
-            });
-        }
-    };
-
-    // A really lightweight plugin wrapper around the constructor,
-    // preventing against multiple instantiations
-    $.fn[pluginName] = function ( options ) {
-        return this.each(function () {
-            if (!$.data(this, "plugin_" + pluginName)) {
-                $.data(this, "plugin_" + pluginName,
-                new Plugin( this, options ));
+            for (var index = 0; index < this.$entrySources.length; index++) {
+                const element = this.$entrySources[index];
+                this.addListener(element, 'change', 'entryTypes');
             }
-        });
-    };
+        },
 
-})( jQuery, window, document );
+        select: function(ev) {
+            var type = $(ev.target).attr('data-link-type');
+
+            var sel = this.$container.find('[data-link-type].sel');
+            var current = this.$container.find('[data-link-type-settings]:not(.hidden)');
+
+            sel.removeClass('sel');
+            current.addClass('hidden');
+
+            $(ev.target).addClass('sel');
+            this.$container.find('[data-link-type-settings="'+ type +'"]').removeClass('hidden');
+        },
+
+        toggles: function(ev) {
+            var $toggle = $(ev.target);
+            var $parent = $toggle.closest('[data-link-type-settings]');
+            var type = $parent.attr('data-link-type-settings');
+
+            if ($toggle.hasClass('on')) {
+                this.$container.find('[data-link-type="' + type + '"]').addClass('active');
+            } else {
+                this.$container.find('[data-link-type="' + type + '"]').removeClass('active');
+            }
+        },
+
+        entryTypes: function(ev) {
+            var checkbox = $(ev.currentTarget);
+            var value = checkbox.val();
+
+            if (value !== 'singles') {
+                if (value === '*') {
+                    console.log('checked', checkbox.prop('checked'))
+                    if (checkbox.prop('checked')) {
+                        this.$container.find('[data-source-types]').each(function() {
+                            $(this).removeClass('hidden');
+                        })
+                    } else {
+                        this.$container.find('[data-source-types]').each(function () {
+                            $(this).addClass('hidden');
+                        })
+                    }
+                } else {
+                    console.log('toggle on off the entry type', value);
+                    var entryTypeDiv = this.$container.find('[data-source-types="'+value+'"]');
+                    if (entryTypeDiv.hasClass('hidden')) {
+                        entryTypeDiv.removeClass('hidden');
+                    } else {
+                        entryTypeDiv.addClass('hidden');
+                    }
+                }
+            }
+        }
+    })
+})(jQuery);

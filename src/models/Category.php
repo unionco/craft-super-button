@@ -15,6 +15,7 @@ use Craft;
 
 use unionco\superbutton\SuperButton;
 use unionco\superbutton\base\ElementButtonLink;
+use craft\elements\Category as CraftCategory;
 
 /**
  * Category Link Model
@@ -29,4 +30,11 @@ use unionco\superbutton\base\ElementButtonLink;
  * @since     1.0.0
  */
 class Category extends ElementButtonLink
-{ }
+{
+    // Static
+    // =========================================================================
+    public static function elementType()
+    {
+        return CraftCategory::class;
+    }
+}

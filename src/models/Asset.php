@@ -14,6 +14,7 @@ use Craft;
 
 use unionco\superbutton\SuperButton;
 use unionco\superbutton\base\ElementButtonLink;
+use craft\elements\Asset as CraftAsset;
 
 /**
  * Asset Link Model
@@ -29,5 +30,10 @@ use unionco\superbutton\base\ElementButtonLink;
  */
 class Asset extends ElementButtonLink
 {
-
+    // Static
+    // =========================================================================
+    public static function elementType()
+    {
+        return CraftAsset::class;
+    }
 }

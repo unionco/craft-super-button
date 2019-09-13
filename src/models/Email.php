@@ -29,4 +29,27 @@ use unionco\superbutton\base\ButtonLink;
  * @since     1.0.0
  */
 class Email extends ButtonLink
-{ }
+{
+    // Static
+    // =========================================================================
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public static function defaultLabel(): string
+    {
+        return Craft::t('super-button', 'Email Address');
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public static function defaultPlaceholder(): string
+    {
+        return Craft::t('super-button', 'support@craftcms.com');
+    }
+}

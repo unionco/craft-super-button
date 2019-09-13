@@ -13,6 +13,7 @@ namespace unionco\superbutton\assetbundles\superbuttonsettings;
 use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
+use craft\web\assets\vue\VueAsset;
 
 /**
  * SuperButtonSettingsAsset AssetBundle
@@ -48,6 +49,7 @@ class SuperButtonSettingsAsset extends AssetBundle
         // define the dependencies
         $this->depends = [
             CpAsset::class,
+            VueAsset::class
         ];
 
         // define the relative path to CSS/JS files that should be registered with the page

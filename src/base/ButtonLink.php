@@ -12,6 +12,7 @@ namespace unionco\superbutton\base;
 
 use Craft;
 use craft\base\SavableComponent;
+use Reflection;
 use unionco\superbutton\SuperButton;
 
 /**
@@ -29,6 +30,16 @@ use unionco\superbutton\SuperButton;
  */
 abstract class ButtonLink extends SavableComponent implements ButtonLinkInterface
 {
+    // Public Properties
+    // =========================================================================
+
+    public $customLabel;
+    public $customPlaceholder;
+    public $fieldSettings;
+    public $value;
+    public $customText;
+    public $target;
+
     // Static
     // =========================================================================
 
@@ -48,9 +59,34 @@ abstract class ButtonLink extends SavableComponent implements ButtonLinkInterfac
         return array_pop($classNameParts);
     }
 
+    public static function settingsTemplatePath(): string
+    {
+        return 'super-button/_settings/text';
+    }
+
+    public static function inputTemplatePath(): string
+    {
+        return 'super-button/_input/text';
+    }
+
+    public static function defaultPlaceholder(): string
+    {
+        return static::defaultLabel();
+    }
+
     public static function hasSettings(): bool
     {
         return true;
+    }
+
+    public static function elementType()
+    {
+        return null;
+    }
+
+    public static function hasElement(): bool
+    {
+        return (static::elementType() ?? false) ? true : false;
     }
 
     // Public Methods
@@ -59,5 +95,20 @@ abstract class ButtonLink extends SavableComponent implements ButtonLinkInterfac
     public function getType(): string
     {
         return get_class($this);
+    }
+
+    public function getNiceName(): string
+    {
+        return (new \ReflectionClass($this))->getShortName();
+    }
+
+    public function getSettingsHtml(): string
+    {
+        return Craft::$app->getView()->renderTemplate(
+            static::settingsTemplatePath(),
+            [
+                'type' => $this,
+            ]
+        );
     }
 }

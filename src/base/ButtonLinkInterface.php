@@ -33,6 +33,13 @@ interface ButtonLinkInterface extends SavableComponentInterface
     // =========================================================================
     public static function group(): string;
     public static function groupTitle(): string;
+    public static function defaultLabel(): string;
+    public static function defaultPlaceholder(): string;
+    public static function settingsTemplatePath(): string;
+    public static function inputTemplatePath(): string;
+    public static function hasSettings(): bool;
+    public static function elementType();
+    public static function hasElement(): bool;
 
     // Public
     // =========================================================================

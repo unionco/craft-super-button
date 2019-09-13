@@ -1,0 +1,50 @@
+{% import "_includes/forms" as forms %}
+
+{# open div lives on base #}
+    {% include 'super-button/_settings/base' %}
+
+    <div class="flex" style="align-items: flex-start;">
+        <div data-sources="{{ type.niceName }}">
+            {{ forms.checkboxSelectField({
+                label: "Sources"|t('super-button'),
+                instructions: "Which sources do you want to select {type} from?"|t('super-button', { type: type.defaultLabel()|lower }),
+                id: type.type|id~'-sources',
+                name: 'sources',
+                options: type.sourceOptions,
+                values: type.sources,
+                errors: type.getErrors('sources'),
+                showAllOption: true,
+            }) }}
+        </div>
+
+        {% if type.niceName == 'Entry' %}
+            <div style="padding-left: 10px;">
+                {% for source in type.sourceOptions if source.types | length %}
+                    <div style="margin-bottom: 24px;" data-source-types="{{ source.value }}" class="{{ source.active ?: 'hidden' }}">
+                        {{ forms.checkboxSelectField({
+                            label: source.label ~ " Entry Types"|t('super-button'),
+                            instructions: "Which entry types do you want to select {type} from?"|t('super-button', { type: type.defaultLabel()|lower }),
+                            id: type.type|id~ '-' ~ source.value ~ '-types',
+                            name: 'entryTypes',
+                            options: source.types,
+                            values: type.entryTypes,
+                            errors: type.getErrors('entryTypes'),
+                            showAllOption: true,
+                        }) }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    {{ forms.textField({
+        label: "Selection Label"|t('super-button'),
+        instructions: "Enter the text you want to appear on the {type} selection input."|t('super-button', { type: type.defaultLabel()|lower }),
+        id: type.type|id~'-customSelectionLabel',
+        name: 'customSelectionLabel',
+        value: type.customSelectionLabel,
+        placeholder: type.defaultSelectionLabel,
+        errors: type.getErrors('customSelectionLabel')
+    }) }}
+
+</div>

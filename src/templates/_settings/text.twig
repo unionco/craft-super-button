@@ -1,0 +1,15 @@
+{% import "_includes/forms" as forms %}
+
+{# open div lives on base #}
+    {% include 'super-button/_settings/base' %}
+
+    {{ forms.textField({
+        label: "Placeholder"|t('linkit'),
+        instructions: "Override the default placeholder"|t('linkit'),
+        id: type.type|id~'-customPlaceholder',
+        name: 'customPlaceholder',
+        value: type.customPlaceholder ?? '',
+        placeholder: type.defaultPlaceholder,
+        errors: type.getErrors('customPlaceholder')
+    }) }}
+</div>

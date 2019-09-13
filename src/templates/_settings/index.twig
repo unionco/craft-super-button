@@ -1,0 +1,114 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Super Button plugin for Craft CMS
+ *
+ * SuperButton Field Settings
+ *
+ * @author    Union
+ * @copyright Copyright (c) 2019 Union
+ * @link      https://github.com/unionco
+ * @package   SuperButton
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{# {% do view.registerAssetBundle("unionco\\superbutton\\assetbundles\\superbuttonsettings\\SuperButtonSettingsAsset") %} #}
+
+{% set id = 'superbutton'|id %}
+{% set allLinkTypes = field.linkTypes %}
+{% set linkTypeGroups = field.linkTypes|group('groupTitle') %}
+
+<div id="vue-root" class="sbc">
+    <div class="sbc-sidebar">
+        <div class="sbc-heading">
+            <h5>{{ "Button Types"|t('super-button') }}</h5>
+        </div>
+        <div class="sbc-items">
+            {% for linkType in allLinkTypes %}
+                {% set isAvailable = field.types[linkType.type].enabled ?? false %}
+
+                <div data-link-type="{{ linkType.niceName|lower }}" class="sbc-item {{ loop.first ? 'sel' : '' }} {{ isAvailable ? 'active' : '' }}">
+                    <div class="name">{{linkType.niceName}}</div>
+                    <div class="handle code">{{linkType.groupTitle}}</div>
+                    <div class="indicator"></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="sbc-settings">
+        <div class="sbc-heading">
+            <h5>{{ "Link Settings"|t('super-button') }}</h5>
+        </div>
+        <div class="sbc-content">
+            {% for linkType in allLinkTypes %}
+                {% set name = 'types['~ linkType.type ~']' %}
+
+                <div data-link-type-settings="{{ linkType.niceName|lower }}" class="sbc-field {{ loop.first ?: 'hidden' }}">
+                    {% namespace name %}
+                        {{ linkType.getSettingsHtml()|raw }}
+                    {% endnamespace %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{{ forms.field({
+    label: 'Repeater Settings',
+    instructions: "Configure whether your button link can be repeated or not."|t('super-button'),
+}) }}
+
+{{ forms.lightSwitchField({
+    id: 'allowRepeat',
+    name: 'allowRepeat',
+    label: 'Allow Repeater',
+    toggle: '#allowRepeat-settings',
+    on: true,
+}) }}
+
+<div id="allowRepeat-settings">
+    {{ forms.textField({
+        label: "Min Links"|t('super-button'),
+        instructions: "The minimum number of links the field is allowed to have."|t('super-button'),
+        id: 'minLinks',
+        name: 'minLinks',
+        value: field.minLinks,
+        type: 'number',
+        size: 3,
+        errors: field.getErrors('minLinks')
+    }) }}
+
+    {{ forms.textField({
+        label: "Max Links"|t('super-button'),
+        instructions: "The maximum number of links the field is allowed to have."|t('super-button'),
+        id: 'maxLinks',
+        name: 'maxLinks',
+        value: field.maxLinks,
+        type: 'number',
+        size: 3,
+        errors: field.getErrors('maxLinks')
+    }) }}
+</div>
+
+{% js %}
+new Craft.SuperButtonConfigurator('{{prefix}}vue-root');
+{# new Vue({
+    el: '#{{ prefix }}vue-root',
+    data() {
+        return {}
+    },
+
+    mounted() {
+        console.log('mounted');
+    },
+
+    methods: {
+        onSelected(e) {
+            console.log(e);
+        }
+    }
+}); #}
+{% endjs %}

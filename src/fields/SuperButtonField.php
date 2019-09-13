@@ -19,6 +19,8 @@ use craft\helpers\Json;
 use craft\base\ElementInterface;
 use unionco\superbutton\SuperButton;
 use unionco\superbutton\assetbundles\superbuttonfield\SuperButtonFieldAsset;
+use unionco\superbutton\assetbundles\superbuttonsettings\SuperButtonSettingsAsset;
+use unionco\superbutton\base\ButtonLink;
 use unionco\superbutton\base\ButtonLinkInterface;
 
 /**
@@ -42,6 +44,7 @@ class SuperButtonField extends Field
     public $selectLinkText = '';
     public $sources = '*';
     public $entryTypes = '*';
+    public $types;
     public $defaultLinkLayout = 'row';
     public $defaultText;
     public $allowTarget;
@@ -76,7 +79,7 @@ class SuperButtonField extends Field
      */
     public static function displayName(): string
     {
-        return Craft::t('super-button', 'SuperButton');
+        return Craft::t('super-button', 'Super Button');
     }
 
     /**
@@ -149,7 +152,32 @@ class SuperButtonField extends Field
      */
     public function normalizeValue($value, ElementInterface $element = null)
     {
-        return $value;
+        if ($value instanceof ButtonLink) {
+            return $value;
+        }
+
+        if (is_string($value)) {
+            $value = Json::decodeIfJson($value);
+        }
+
+        if (isset($value['type']) && $value['type'] != '') {
+            if (isset($value['value']) && $value['value'] == '') {
+                return null;
+            }
+
+            if (isset($value['values'])) {
+                $postedValue = $value['values'][$value['type']] ?? '';
+                $value['value'] = is_array($postedValue) ? $postedValue[0] : $postedValue;
+                unset($value['values']);
+            }
+
+            $link = $this->_getLinkTypeModelByType($value['type']);
+            $link->setAttributes($value, false); // TODO: Get Rules added for these and remove false
+            $link->ownerElement = $element;
+            return $link;
+        }
+
+        return null;
     }
 
     /**
@@ -167,7 +195,18 @@ class SuperButtonField extends Field
      */
     public function serializeValue($value, ElementInterface $element = null)
     {
-        return parent::serializeValue($value, $element);
+        $serialized = [];
+
+        if ($value instanceof ButtonLink) {
+            $serialized = [
+                'type' => $value->type,
+                'value' => $value->value,
+                'customText' => $value->customText,
+                'target' => $value->target,
+            ];
+        }
+
+        return parent::serializeValue($serialized, $element);
     }
 
     /**
@@ -177,12 +216,16 @@ class SuperButtonField extends Field
      */
     public function getSettingsHtml()
     {
-        // Render the settings template
         $view = Craft::$app->getView();
+        $view->registerAssetBundle(SuperButtonSettingsAsset::class);
+
+        // Render the settings template
+        $prefix = $view->namespaceInputId('');
 
         return $view->renderTemplate(
-            'super-button/_components/fields/SuperButton_settings',
+            'super-button/_settings/index',
             [
+                'prefix' => $prefix,
                 'field' => $this,
             ]
         );
@@ -212,7 +255,7 @@ class SuperButtonField extends Field
             'name' => $this->handle,
             'namespace' => $namespacedId,
             'prefix' => Craft::$app->getView()->namespaceInputId(''),
-            ];
+        ];
         $jsonVars = Json::encode($jsonVars);
         Craft::$app->getView()->registerJs("$('#{$namespacedId}-field').SuperButtonSuperButton(" . $jsonVars . ");");
 
@@ -253,15 +296,36 @@ class SuperButtonField extends Field
     /**
      * Undocumented function
      *
+     * @param string $type
+     * @param boolean $populate
+     * @return void
+     */
+    private function _getLinkTypeModelByType(string $type, bool $populate = true)
+    {
+        try {
+            $linkType = Craft::createObject($type);
+            if ($populate) {
+                $linkType = $this->_populateLinkTypeModel($linkType);
+            }
+            return $linkType;
+        } catch (ErrorException $exception) {
+            $error = $exception->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Undocumented function
+     *
      * @param ButtonLinkInterface $linkType
      * @return void
      */
     private function _populateLinkTypeModel(ButtonLinkInterface $linkType)
     {
         // Get Type Settings
-        // $attributes = $this->types[$linkType->type] ?? [];
-        // $linkType->setAttributes($attributes, false);
-        // $linkType->fieldSettings = $this->getSettings();
+        $attributes = $this->types[$linkType->type] ?? [];
+        $linkType->setAttributes($attributes, false);
+        $linkType->fieldSettings = $this->getSettings();
         return $linkType;
     }
 }

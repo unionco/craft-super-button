@@ -29,4 +29,16 @@ use unionco\superbutton\base\ButtonLink;
  * @since     1.0.0
  */
 class Url extends ButtonLink
-{ }
+{
+    // Static
+    // =========================================================================
+    public static function defaultLabel(): string
+    {
+        return Craft::t('super-button', 'URL');
+    }
+
+    public static function defaultPlaceholder(): string
+    {
+        return Craft::t('super-button', Craft::$app->getSites()->getCurrentSite()->baseUrl);
+    }
+}
